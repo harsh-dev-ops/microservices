@@ -1,0 +1,15 @@
+[submodule "elasticsearch"]
+	path = elasticsearch
+	url = https://github.com/harsh-dev-ops/elasticsearch.git
+[submodule "grpc"]
+	path = grpc
+	url = https://github.com/harsh-dev-ops/grpc.git
+[submodule "redis"]
+	path = redis
+	url = https://github.com/harsh-dev-ops/redis.git
+[submodule "rabbitmq"]
+	path = rabbitmq
+	url = https://github.com/harsh-dev-ops/rabbitmq.git
+[submodule "kafka"]
+	path = kafka
+	url = https://github.com/harsh-dev-ops/kafka.git
