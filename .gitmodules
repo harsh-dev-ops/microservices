@@ -13,3 +13,6 @@
 [submodule "kafka"]
 	path = kafka
 	url = https://github.com/harsh-dev-ops/kafka.git
+[submodule "fastapi"]
+	path = fastapi
+	url = https://github.com/harsh-dev-ops/fastapi.git
