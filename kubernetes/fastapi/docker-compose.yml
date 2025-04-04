@@ -1,0 +1,91 @@
+services:
+  redis:
+    image: redis/redis-stack:latest
+    container_name: fastapi_redis
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis_data:/data
+
+  postgres:
+    image: postgres:15-alpine3.19
+    container_name: fastapi_pgdata
+    ports:
+    - "5433:5432"
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: postgres -c 'max_connections=250'
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/prod/dockerfile
+    image: auth_service
+    container_name: fastapi_app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/home/app
+    command:
+      - /bin/bash
+      - -c
+      - |
+        alembic upgrade head
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+    depends_on:
+      - redis
+      - postgres
+
+  
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.14.1
+  #   container_name: elasticsearch
+  #   environment:
+  #     - xpack.security.enabled=false
+  #     - discovery.type=single-node
+  #     - bootstrap.memory_lock=true
+  #     - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   ports:
+  #     - '9200:9200'
+  #   volumes:
+  #     - search-data:/usr/share/elasticsearch/data
+  #   # depends_on:
+  #   #   - database
+  #   #   - redis
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.14.1
+  #   ports:
+  #     - '5601:5601'
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+  #   depends_on:
+  #     - elasticsearch
+  
+
+  # worker:
+  #   image: scrapper
+  #   build:
+  #     context: .
+  #     dockerfile: dockerfile
+  #   volumes:
+  #     - .:/app
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   command: celery -A app.tasks.celeryconfig worker --loglevel=info -c 50
+
+volumes:
+  pgdata:
+  redis_data:
+    

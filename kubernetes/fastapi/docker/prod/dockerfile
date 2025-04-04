@@ -1,0 +1,27 @@
+FROM python:3.11-slim AS build
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get update && \ 
+   apt-get install -y libpq-dev gcc git
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt requirements.txt
+
+RUN pip3 install --upgrade pip && \
+    pip3 install -r requirements.txt --no-cache-dir
+
+    
+FROM python:3.11-slim AS runtime
+
+COPY --from=build /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /home/app
+COPY . .
+EXPOSE 8000
+
+CMD [ "uvicorn", "app.main:app", "--port", "8000", "--host", "0.0.0.0" ]
