@@ -7,7 +7,6 @@ from ..otp.schema import OtpIn
 from app.database.postgres import crud
 from app.database.postgres.models import User
 from . import helpers
-
 from .exceptions import InvalidEmailId, MissingFormData
 from ..tokens.services import Token
 from ..otp.services import OtpService
