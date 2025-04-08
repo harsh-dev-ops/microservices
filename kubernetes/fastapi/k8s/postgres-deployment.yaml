@@ -1,3 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,12 +36,12 @@ spec:
               key: POSTGRES_PASSWORD
         - name: POSTGRES_USER
           valueFrom:
-            configMapRef:
+            configMapKeyRef:
               name: app-config
               key: POSTGRES_USER
         - name: POSTGRES_DB
           valueFrom:
-            configMapRef:
+            configMapKeyRef:
               name: app-config
               key: POSTGRES_DB
         ports:
@@ -47,3 +60,20 @@ spec:
       - name: postgres-data
         persistentVolumeClaim:
           claimName: postgres-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: LoadBalancer
+  ports:
+  - name: postgres
+    port: 5432      
+    targetPort: 5432
+  selector:
+    app: postgres  
