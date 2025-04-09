@@ -1,0 +1,6 @@
+resources:
+- secrets.yaml
+- configmap.yaml
+- postgres-deployment.yaml
+- redis-deployment.yaml
+- fastapi-deployment.yaml

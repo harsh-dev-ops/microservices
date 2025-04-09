@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-migration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-migration
+  template:
+    metadata:
+      labels:
+        app: fastapi-migration
+    spec:
+      containers:
+      - name: fastapi-migration
+        image: fastapi-migration:k8s
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: app-secrets
+        resources:
+          requests:
+             memory: "64Mi"
+             cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+      - name: fastapi-app
+        image: fastapi:k8s
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: app-secrets
+        resources:
+          requests:
+             memory: "64Mi"
+             cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports: 
+        - containerPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: fastapi-app
+  ports:
+  - port: 8000
+    targetPort: 8000
