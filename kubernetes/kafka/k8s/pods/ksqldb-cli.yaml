@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: ksqldb-cli
-    image: confluentinc/cp-ksqldb-cli:latest
+    image: confluentinc/cp-ksqldb-cli:latest.arm64
     resources:
       requests:
         memory: "64Mi"

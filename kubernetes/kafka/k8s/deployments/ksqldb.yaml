@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ksqldb-server
-        image: confluentinc/cp-ksqldb-server:latest
+        image: confluentinc/cp-ksqldb-server:latest.arm64
         ports:
         - containerPort: 8088
         resources:
