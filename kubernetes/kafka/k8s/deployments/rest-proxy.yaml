@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: rest-proxy
-        image: confluentinc/cp-kafka-rest:latest.arm64
+        image: confluentinc/cp-kafka-rest:latest
         ports:
         - containerPort: 8082
         resources:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: control-center
-        image: confluentinc/cp-enterprise-control-center:latest.arm64
+        image: confluentinc/cp-enterprise-control-center:latest
         ports:
         - containerPort: 9021
         resources:

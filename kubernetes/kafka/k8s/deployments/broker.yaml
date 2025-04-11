@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: broker
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: broker
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: broker
-        image: confluentinc/cp-server:latest.arm64
+        image: confluentinc/cp-server:latest
         ports:
         - containerPort: 29092
         - containerPort: 29093

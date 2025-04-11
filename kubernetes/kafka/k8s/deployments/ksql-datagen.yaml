@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ksql-datagen
-        image: confluentinc/ksqldb-examples:latest.arm64
+        image: confluentinc/ksqldb-examples:latest
         resources:
           requests:
             memory: "64Mi"

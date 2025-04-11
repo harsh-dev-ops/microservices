@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: zookeeper
-        image: confluentinc/cp-zookeeper:latest.arm64
+        image: confluentinc/cp-zookeeper:latest
         ports:
         - containerPort: 2181
         resources:
