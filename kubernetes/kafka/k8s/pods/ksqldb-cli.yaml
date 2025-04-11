@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ksqldb-cli
+spec:
+  containers:
+  - name: ksqldb-cli
+    image: confluentinc/cp-ksqldb-cli:latest
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    command: ["/bin/sh"]
+    tty: true
+    stdin: true
+    

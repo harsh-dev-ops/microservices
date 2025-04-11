@@ -1,0 +1,133 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: broker-config
+data:
+  KAFKA_NODE_ID: "1"
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+  KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:29092,PLAINTEXT_HOST://broker:9092"
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+  KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+  KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+  KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+  KAFKA_JMX_PORT: "9101"
+  KAFKA_JMX_HOSTNAME: "localhost"
+  KAFKA_PROCESS_ROLES: "broker,controller"
+  KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker:29093"
+  KAFKA_LISTENERS: "PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://0.0.0.0:9092"
+  KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+  KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+  KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
+  KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+  CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connect-config
+data:
+  CONNECT_BOOTSTRAP_SERVERS: broker:29092
+  CONNECT_REST_ADVERTISED_HOST_NAME: connect
+  CONNECT_GROUP_ID: compose-connect-group
+  CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+  CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+  CONNECT_OFFSET_FLUSH_INTERVAL_MS: "10000"
+  CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+  CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+  CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+  CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+  CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+  CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+  CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+  CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.6.1.jar
+  CONNECT_PRODUCER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor
+  CONNECT_CONSUMER_INTERCEPTOR_CLASSES: io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor
+  CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
+  CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: control-center-config
+data:
+  CONTROL_CENTER_BOOTSTRAP_SERVERS: broker:29092
+  CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: connect:8083
+  CONTROL_CENTER_CONNECT_HEALTHCHECK_ENDPOINT: /connectors
+  CONTROL_CENTER_KSQL_KSQLDB1_URL: http://ksqldb-server:8088
+  CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: http://localhost:8088
+  CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+  CONTROL_CENTER_REPLICATION_FACTOR: "1"
+  CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: "1"
+  CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: "1"
+  CONFLUENT_METRICS_TOPIC_REPLICATION: "1"
+  PORT: "9021"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ksql-datagen-config
+data:
+  KSQL_CONFIG_DIR: "/etc/ksql"
+  STREAMS_BOOTSTRAP_SERVERS: broker:29092
+  STREAMS_SCHEMA_REGISTRY_HOST: schema-registry
+  STREAMS_SCHEMA_REGISTRY_PORT: "8081"
+
+---
+
+# ksqldb-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ksqldb-config
+data:
+  KSQL_CONFIG_DIR: "/etc/ksql"
+  KSQL_BOOTSTRAP_SERVERS: "broker:29092"
+  KSQL_HOST_NAME: "ksqldb-server"
+  KSQL_LISTENERS: "http://0.0.0.0:8088"
+  KSQL_CACHE_MAX_BYTES_BUFFERING: "0"
+  KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+  KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+  KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+  KSQL_KSQL_CONNECT_URL: "http://connect:8083"
+  KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: "1"
+  KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+  KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rest-proxy-config
+data:
+  KAFKA_REST_HOST_NAME: rest-proxy
+  KAFKA_REST_BOOTSTRAP_SERVERS: broker:29092
+  KAFKA_REST_LISTENERS: http://0.0.0.0:8082
+  KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: schema-registry-config
+data:
+  SCHEMA_REGISTRY_HOST_NAME: schema-registry
+  SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: broker:29092
+  SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zookeeper-config
+data:
+  ZOOKEEPER_CLIENT_PORT: "2181"
+  ZOOKEEPER_TICK_TIME: "2000"

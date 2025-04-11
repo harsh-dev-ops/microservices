@@ -1,0 +1,40 @@
+# broker-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+      - name: broker
+        image: confluentinc/cp-server:latest
+        ports:
+        - containerPort: 29092
+        - containerPort: 29093
+        - containerPort: 9092
+        - containerPort: 9101
+        resources:
+          requests:
+             memory: "64Mi"
+             cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        envFrom:
+        - configMapRef:
+            name: broker-config
+        volumeMounts:
+        - name: kafka-storage
+          mountPath: /tmp/kraft-combined-logs
+      volumes:
+      - name: kafka-storage
+        persistentVolumeClaim:
+          claimName: kafka-pvc
