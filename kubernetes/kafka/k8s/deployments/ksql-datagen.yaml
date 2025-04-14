@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ksql-datagen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ksql-datagen
+  template:
+    metadata:
+      labels:
+        app: ksql-datagen
+    spec:
+      containers:
+      - name: ksql-datagen
+        image: confluentinc/ksqldb-examples:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        command: ["bash", "-c", "echo Waiting for Kafka to be ready... && cub kafka-ready -b broker:29092 1 40 && echo Waiting for Confluent Schema Registry to be ready... && cub sr-ready schema-registry 8081 40 && echo Waiting a few seconds for topic creation to finish... && sleep 11 && tail -f /dev/null"]
+        envFrom:
+        - configMapRef:
+            name: ksql-datagen-config

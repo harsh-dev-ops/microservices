@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker
+  template:
+    metadata:
+      labels:
+        app: broker
+    spec:
+      containers:
+      - name: broker
+        image: confluentinc/cp-server:latest
+        ports:
+        - containerPort: 29092
+        - containerPort: 29093
+        - containerPort: 9092
+        - containerPort: 9101
+        resources:
+          requests:
+             memory: "128Mi"
+             cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        envFrom:
+        - configMapRef:
+            name: broker-config
+        volumeMounts:
+        - name: kafka-storage
+          mountPath: /var/lib/kafka/data
+      volumes:
+      - name: kafka-storage
+        persistentVolumeClaim:
+          claimName: kafka-pvc
+
+---
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker
+spec:
+  selector:
+    app: broker
+  ports:
+  - name: plaintext
+    port: 29092
+    targetPort: 29092
+  - name: controller
+    port: 29093
+    targetPort: 29093
+  - name: plaintext-host
+    port: 9092
+    targetPort: 9092
+  - name: jmx
+    port: 9101
+    targetPort: 9101

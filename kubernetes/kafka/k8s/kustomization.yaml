@@ -1,6 +1,12 @@
 resources:
   - configmap.yaml
-  - services.yaml
   - volumes.yaml
-  - deployments.yaml
+  - deployments/zookeeper.yaml
+  - deployments/kafka.yaml
+  - deployments/schema-registry.yaml
+  - deployments/rest-proxy.yaml
+  - deployments/connect.yaml
+  - deployments/ksqldb.yaml
+  - deployments/control-center.yaml
+  - deployments/ksql-datagen.yaml
   - pods.yaml
