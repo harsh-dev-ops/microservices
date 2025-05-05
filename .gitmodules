@@ -16,3 +16,6 @@
 [submodule "fastapi"]
 	path = fastapi
 	url = https://github.com/harsh-dev-ops/fastapi.git
+[submodule "kubernetes-handler"]
+	path = kubernetes-handler
+	url = https://github.com/harsh-dev-ops/kubernetes-handler.git
